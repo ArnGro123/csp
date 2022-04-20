@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys, random as rand
 
 pygame.init()
 pygame.font.init()
@@ -12,9 +12,10 @@ player = pygame.image.load("player_ship.png")
 player.convert_alpha(screen)
 player_rect = player.get_rect()
 
-enemy = pygame.image.load("enemy_ship.png")
-enemy.convert_alpha(screen)
-enemy_rect = enemy.get_rect()
+e = pygame.image.load("enemy_ship.png")
+e.convert_alpha(screen)
+rotated_e = pygame.transform.rotate(e,180)
+enemy_rect = e.get_rect()
 
 start_button = pygame.image.load("start_button.png")
 start_button.convert_alpha(screen)
@@ -31,9 +32,11 @@ game_map = [
     [l,l,l,l,l,l],
     ]
 
+enemy_spawned = False
 scroll = [0,400]
 p_x = 250
-p_y = 250
+p_y = 275
+h_size = 200
 
 def start_screen():
 
@@ -80,9 +83,25 @@ def game_screen():
             map_y -= 100
 
 def healthbar():
+    global h_size
+
+    pygame.draw.rect(screen,"red",pygame.Rect(10,10,h_size,26.75))
+    pygame.draw.rect(screen,"white",pygame.Rect(10,10,200,29),4)
+
+    if player_rect.colliderect(enemy_rect):
+            print("collided")
+            h_size -= 1
+        
+
+def enemy_spawn():
+    global e_y_cor
+
+    e_x_cor = rand.randrange(0,600)
+    e_y_cor = 0
     
-    pygame.draw.rect(screen,"red",pygame.Rect(10,10,200,30))
-    pygame.draw.rect(screen,"white",pygame.Rect(10,10,200,34),4)
+    screen.blit(rotated_e,(e_x_cor,e_y_cor))
+
+
 
 z = 0
 
@@ -110,19 +129,28 @@ while True:
     elif z == 1:
 
         game_screen()
-
         game_map.insert(0,[o,o,o,o,o,o])
-
         healthbar()
 
         screen.blit(player,(p_x,p_y))
         player_rect.topleft = (p_x,p_y)
 
+        if enemy_spawned == False:
+            enemy_spawn()
+            enemy_spawned = True
+
+        e_y_cor += 1
+
+        scroll[1] += 1.5
+
         keys = pygame.key.get_pressed()
         
-        if keys[pygame.K_UP]:
-            scroll[1] += 2
-            game_map.insert(0,[o,o,o,o,o,o])
+        if keys[pygame.K_UP] and p_y>0:
+            p_y -= 1
+            game_map.remove([o,o,o,o,o,o])
+
+        if keys[pygame.K_DOWN]:
+            p_y += 1
 
         if keys[pygame.K_RIGHT] and p_x<600:
             p_x += 1
@@ -130,7 +158,10 @@ while True:
         if keys[pygame.K_LEFT] and p_x>0:
             p_x -= 1
 
+      
+
 
     pygame.display.update()
     clock.tick(60)
+
 

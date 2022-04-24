@@ -24,7 +24,7 @@ restart_button = pygame.transform.smoothscale(restart_button,(300,100))
 restart_rect = restart_button.get_rect()
 
 scroll = [0,500]
-speed = 1
+screen_speed = 1
 h_size = 200
 score = 0
 
@@ -70,7 +70,7 @@ def start_screen():
     screen.blit(start_surface,(210,342))
 
 def game_screen():
-    global speed, score
+    global screen_speed, score
     game_map.reverse()
 
     map_x = scroll[0]
@@ -87,8 +87,8 @@ def game_screen():
             map_x = 0
             map_y -= 100
     
-    scroll[1] += speed
-    speed += 0.001
+    scroll[1] += screen_speed
+    screen_speed += 0.001
     o_list = [o,o,o,o,o]
     game_map.insert(0,o_list)
 
@@ -101,7 +101,7 @@ def healthbar():
     pygame.draw.rect(screen,"red",pygame.Rect(10,10,h_size,26.75))
     pygame.draw.rect(screen,"white",pygame.Rect(10,10,200,29),4)
 
-    if player.rect.colliderect(enemy_1.enemy_rect) or player.rect.colliderect(enemy_2.enemy_rect):
+    if player.rect.colliderect(enemy_1.enemy_rect) or player.rect.colliderect(enemy_2.enemy_rect) or player.rect.colliderect(enemy_3.enemy_rect) or player.rect.colliderect(enemy_4.enemy_rect):
         h_size -= 1
 
     if h_size == 0:
@@ -165,9 +165,9 @@ class Enemy(pygame.sprite.Sprite):
         self.image = pygame.image.load("enemy_ship.png").convert_alpha(screen)
         self.rotated_e = pygame.transform.rotate(self.image,180)
         self.enemy_rect = self.rotated_e.get_rect()
-        self.rand_x = rand.randrange(10,400,100)
+        self.rand_x = rand.randrange(10,450,50)
         self.y = 0
-        self.enemy_speed = 1.5
+        self.enemy_speed = rand.randrange(2,4)
 
     def draw(self,screen):
         screen.blit(self.rotated_e,(self.rand_x,self.y))
@@ -176,16 +176,22 @@ class Enemy(pygame.sprite.Sprite):
         self.enemy_speed += 0.001
 
         if self.y > 600:
-            self.y = -10
-            self.rand_x = rand.randrange(10,400,50)
+            self.y = -20
+            self.rand_x = rand.randrange(10,450,50)
 
 
 z = 0
+t = 0
 player = Player()
 enemy_1 = Enemy()
 enemy_2 = Enemy()
+enemy_3 = Enemy()
+enemy_4 = Enemy()
+e_l = [enemy_1,enemy_2,enemy_3,enemy_4]
 all_sprites = pygame.sprite.Group()
-all_sprites.add(player,enemy_1,enemy_2)
+all_sprites.add(player)
+for i in e_l:
+    all_sprites.add(i)
 
 
 while True:
@@ -201,14 +207,13 @@ while True:
             if restart_rect.collidepoint(pos):
                 z = 1
                 h_size = 200
-                speed = 1
+                screen_speed = 1
                 score = 0
                 player.x = 217
                 player.y = 300
-                enemy_1.y = 0
-                enemy_2.y = 0
-                enemy_1.enemy_speed = 1.5
-                enemy_2.enemy_speed = 1.5
+                for i in e_l:
+                    i.y = -20
+                    i.enemy_speed = rand.randrange(2,4)
     
     all_sprites.update()
     
@@ -222,10 +227,21 @@ while True:
         player.draw(screen)
         player.movement()
 
-        enemy_1.draw(screen)
-        enemy_2.draw(screen)
+        if t < 500:
+            enemy_1.draw(screen)
+            enemy_2.draw(screen)
+        elif 500 < t < 2000:
+            enemy_1.draw(screen)
+            enemy_2.draw(screen)
+            enemy_3.draw(screen)
+        else:
+            enemy_1.draw(screen)
+            enemy_2.draw(screen)
+            enemy_3.draw(screen)
+            enemy_4.draw(screen)
 
         score += 1
+        t += 1
 
     else:
         end_screen()

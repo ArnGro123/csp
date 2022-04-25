@@ -21,9 +21,11 @@ restart_button = pygame.image.load("restart_button.png").convert_alpha(screen)
 restart_button = pygame.transform.smoothscale(restart_button,(300,100))
 restart_rect = restart_button.get_rect()
 
+explosion = pygame.image.load("explosion_image.png").convert_alpha(screen)
+
 scroll = [0,500]
 screen_speed = 1
-h_size = 200
+h_size = 210
 score = 0
 
 game_map = [
@@ -99,10 +101,32 @@ def healthbar():
     pygame.draw.rect(screen,"red",pygame.Rect(10,10,h_size,26.75))
     pygame.draw.rect(screen,"white",pygame.Rect(10,10,200,29),4)
 
-    if player.rect.colliderect(enemy_1.enemy_rect) or player.rect.colliderect(enemy_2.enemy_rect) or player.rect.colliderect(enemy_3.enemy_rect) or player.rect.colliderect(enemy_4.enemy_rect):
-        h_size -= 1
+    if player.rect.colliderect(enemy_1.enemy_rect):
+        screen.blit(explosion,(enemy_1.rand_x,enemy_1.y))
+        enemy_1.y = -20
+        enemy_1.rand_x = rand.randrange(10,450,50)  
+        h_size -= 15
+        pygame.time.delay(50)
+    elif player.rect.colliderect(enemy_2.enemy_rect):
+        screen.blit(explosion,(enemy_2.rand_x,enemy_2.y))
+        enemy_2.y = -20
+        enemy_2.rand_x = rand.randrange(10,450,50)  
+        h_size -= 15
+        pygame.time.delay(50)
+    elif player.rect.colliderect(enemy_3.enemy_rect):
+        screen.blit(explosion,(enemy_3.rand_x,enemy_3.y))
+        enemy_3.y = -20
+        enemy_3.rand_x = rand.randrange(10,450,50)  
+        h_size -= 15
+        pygame.time.delay(50)
+    elif player.rect.colliderect(enemy_4.enemy_rect):
+        screen.blit(explosion,(enemy_4.rand_x,enemy_4.y))
+        enemy_4.y = -20
+        enemy_4.rand_x = rand.randrange(10,450,50)  
+        h_size -= 15
+        pygame.time.delay(50)
 
-    if h_size == 0:
+    if h_size <= 0:
         z = 2
 
 def end_screen():
@@ -204,6 +228,7 @@ while True:
                 z = 1
             if restart_rect.collidepoint(pos):
                 z = 1
+                t = 0
                 h_size = 200
                 screen_speed = 1
                 score = 0

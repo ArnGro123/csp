@@ -1,5 +1,3 @@
-#TO-DO :  enemy spawn, healthbar, end screen
-
 import pygame, sys, math, random as rand
 
 pygame.init()
@@ -145,15 +143,15 @@ class Player(pygame.sprite.Sprite):
         
         if keys[pygame.K_DOWN] and self.y < 490:
             self.y += 1.5
-            self.rect.y += 1.5
+            self.rect.y += 2
 
         if keys[pygame.K_RIGHT] and self.x<433:
             self.x += 1
-            self.rect.x += 1
+            self.rect.x += 1.5
         
         if keys[pygame.K_LEFT] and self.x>0:
             self.x -= 1
-            self.rect.x -= 1
+            self.rect.x -= 1.5
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -227,10 +225,9 @@ while True:
         player.draw(screen)
         player.movement()
 
-        if t < 500:
+        if t < 300:
             enemy_1.draw(screen)
-            enemy_2.draw(screen)
-        elif 500 < t < 2000:
+        elif 300 <= t < 1700:
             enemy_1.draw(screen)
             enemy_2.draw(screen)
             enemy_3.draw(screen)

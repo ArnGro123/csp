@@ -119,12 +119,6 @@ def healthbar():
         enemy_3.rand_x = rand.randrange(10,450,50)  
         h_size -= 15
         pygame.time.delay(50)
-    elif player.rect.colliderect(enemy_4.enemy_rect):
-        screen.blit(explosion,(enemy_4.rand_x,enemy_4.y))
-        enemy_4.y = -20
-        enemy_4.rand_x = rand.randrange(10,450,50)  
-        h_size -= 15
-        pygame.time.delay(50)
 
     if h_size <= 0:
         z = 2
@@ -151,31 +145,33 @@ class Player(pygame.sprite.Sprite):
 
         self.image = pygame.image.load("player_ship.png").convert_alpha()
         self.rect = self.image.get_rect()
+        self.player_speed = 1
         self.x = 217
         self.y = 300
 
     def draw(self,screen):
         screen.blit(self.image, (self.x,self.y))
         self.rect.topleft = (self.x,self.y)
+        self.player_speed += 0.0001
         
     def movement(self):
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_UP] and self.y > 0:
-            self.y -= 1
-            self.rect.y -= 1
+            self.y -= self.player_speed
+            self.rect.y -= self.player_speed
         
         if keys[pygame.K_DOWN] and self.y < 490:
-            self.y += 1.5
-            self.rect.y += 2
+            self.y += self.player_speed
+            self.rect.y += self.player_speed
 
         if keys[pygame.K_RIGHT] and self.x<433:
-            self.x += 1
-            self.rect.x += 1.5
+            self.x += self.player_speed
+            self.rect.x += self.player_speed
         
         if keys[pygame.K_LEFT] and self.x>0:
-            self.x -= 1
-            self.rect.x -= 1.5
+            self.x -= self.player_speed
+            self.rect.x -= self.player_speed
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -208,8 +204,7 @@ player = Player()
 enemy_1 = Enemy()
 enemy_2 = Enemy()
 enemy_3 = Enemy()
-enemy_4 = Enemy()
-e_l = [enemy_1,enemy_2,enemy_3,enemy_4]
+e_l = [enemy_1,enemy_2,enemy_3]
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 for i in e_l:
@@ -250,17 +245,15 @@ while True:
         player.draw(screen)
         player.movement()
 
-        if t < 300:
+        if t < 400:
             enemy_1.draw(screen)
-        elif 300 <= t < 1700:
+        elif 400 <= t < 1500:
             enemy_1.draw(screen)
             enemy_2.draw(screen)
-            enemy_3.draw(screen)
         else:
             enemy_1.draw(screen)
             enemy_2.draw(screen)
             enemy_3.draw(screen)
-            enemy_4.draw(screen)
 
         score += 1
         t += 1
